@@ -1,0 +1,217 @@
+#1 Demo
+
+#2 The starting HTML Files
+HTML files:
+home
+day
+addfood
+
+#3 Adding templates
+(i) start with one app.py files
+    then reorganise to cut down on code duplication, etc...
+
+
+#4 Creating the Database
+(i) Create a new sql file - food_tracker.sql
+    to create table
+(ii) Determine tables needed for the app in above file
+(iii) Commands to create tables using file:
+
+$ sqlite3 food_log.db < food_tracker.sql
+
+#5 Adding the Database helpers
+    ref functions created in previous projects
+
+#6 Working with The Food Form
+(i) update add_food.html, so that form action is 
+directed to food page
+(ii) make sure getting data back - i.e. each input needs a NAME!
+(iii) make sure each of values is being passed correctly to app
+
+
+#6 Inserting Food into the Database
+(i) transfer form data into database
+    test this has worked by (a) running app,
+    (b) checking sqlite3 db
+(ii) we want to see list of food already in db
+
+
+#7 Display All Foods in Database
+(i) need to write a query
+query db for everything in the food table
+
+
+#8 Inserting the date
+(i) allow user to add date, and have it appear in a list
+(ii) dates - protype it first
+
+#9 Query All dates
+(i) add formatted date to date_log db
+(ii) retrieve all dates from db, format and output 
+on home page
+(iii) want dates to appear in chronological order
+    => add "order by" to sql query
+
+
+#10 Day Screen
+
+(i) need to transfer calory data fro a spec date to view page
+(ii) index page should show total cals, etc for each day where
+data was entered
+(iii) Need to populate food dropdown on day.html page
+with foods from database
+(iv) create a cursor for (iii) and pass to template via render_template(...)
+
+#11 Add food to database
+(i) create a new cursor to fetch food ids, and combine with date ids
+
+#12 Get List of Foods for Day
+(i) we want to return all foods associated with particular day
+
+#13 getting Food Totals for Day
+(i) use python to get total to minimise hits on database
+
+
+#14 Links
+
+(i) want to click on 'view' on home page, next to corresponding 
+date entry to view details on view page
+(ii) need to make date dynamic
+
+#15 Sum Totals Per Day
+(i) need to write a query to get the sums
+(ii) use JADE (chrome app store)
+
+#15 Adding Links
+
+(i) test that all the links work -
+adding url_for in html files as appropriate
+
+#16 Refactor
+
+(i) separate db functions
+(ii) take out common elements of templates and put in a base file
+(iii) brake up any long lines in app.py
+
+#17 Deployent Server Setup on Amazon Lightsail
+(i) Service for virtual servers
+(ii) See in browser using IP
+
+(iii) python anywhere and heroku - better for deploying apps
+re beginner friendly
+(iv) Amazon lightsail free for first month
+
+Amazon Lightsail, implementation:
+(a) create an instance using Nginx
+(b) operating system only - using ubuntu
+(c) after setup, can log in via browser console
+(d) connect to ubuntu server
+(e) update
+$ sudo apt-get update
+(f) once done, install Nginx on it
+(g) start nginx to make sure working, 
+then configure to work with app
+
+$ sudo /etc/init.d/nginx start
+
+remove default configuration, by removing a file
+
+$ sudo rm /etc/nginx/sites-enabled/default
+
+replace with file to handle flask app
+create file called 'flask_settings':
+
+$ sudo touch /etc/nginx/sites-ava
+ilable/flask_settings
+
+create a link between this file and another file in sites-enabled,
+so can have both
+
+$ sudo ln -s /etc/nginx/sites-available/flask_settings /etc/nginx/sites-enabled/flask_settings
+
+write following code in file:
+
+server {
+location / {
+proxy_pass http://127.0.0.1:8000;
+proxy_set_headerHost $host;
+ proxy_set_header X-Real-IP $remote_addr;
+}
+}
+
+
+$ sudo vi /etc/nginx/sites-enabled/flask_settings
+
+(h) restart the server
+$ sudo /etc/init.d/nginx restart
+
+(i) install pip
+
+$ sudo apt-get install python3-pip
+
+(j) install the following with pip:
+
+virtualenv
+
+(k) create and start up virtual environment
+
+$ virtualenv env
+$ virtualenv --python python3 env
+$ source env/bin/activate
+
+(l) inside this virtual env install flask and gunicorn
+
+(m) make simple flask app to make sure 
+virtual env is configure correctly, etc
+
+i.e.
+fromflaskimportFlask
+
+app=Flask(__name__)
+
+@app.route('/home')
+defhome():
+    return'<h1>Hello , World!</h1>'
+
+
+- don't need to put in app.run, etc
+- gunicorn will take care of this!
+
+(n) running
+$ gunicorn hello:app # gunicorn <app-name>:app
+
+we see that it is running on port 8000:
+
+2019-10-13 18:08:26 +0000] [19695] [INFO] Listening at: 
+http://127.0.0.1:8000 (19695)
+
+take 'food-tracker' ip 35.178.249.247 
+(corresponding to amazon lightsail server)
+
+enter the following in browser:
+
+35.178.249.247/home
+
+application server running - gunicorn
+    handles requests to and from the app
+
+    - nginx is a proxy server - handles the http
+    requests, from outside world, taking those,
+    and send to gunicorn inside server 
+
+    - two servers running (gunicorn never accessed from the outside)
+
+#18 Deploy to Amazon Lightsail Server
+
+
+(o) transfer code over to (lightsail) server
+use git
+
+- check git installed on server
+(i.e. $ which  git)
+
+- create a repository on local machine
+- go to github and create a new one
+- $ git remote add origin <link-git-repo>
+-
+-
