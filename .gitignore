@@ -1,0 +1,10 @@
+# virtualenv
+venv/
+
+# python generated files
+*.pyc
+
+# directories
+__pycache__/
+fix/
+my_code/
